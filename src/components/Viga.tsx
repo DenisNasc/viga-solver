@@ -1,12 +1,18 @@
 import React from 'react';
+import {useSelector} from 'react-redux';
 import {createStyles, Theme, makeStyles} from '@material-ui/core/styles';
-import Konva from 'konva';
-import {Stage, Layer, Rect, Text, Circle, Line} from 'react-konva';
+import {Stage, Layer, Rect, Text, Arrow, Line} from 'react-konva';
+
+import {Store} from '../redux/store';
+import {VigaReducer} from '../redux/reducers/viga';
 
 const Viga = () => {
   const classes = useStyles();
+
+  const {length: vigaLength} = useSelector<Store, VigaReducer>(state => state.viga);
+
   return (
-    <Stage className={classes.display} width={1100} height={600}>
+    <Stage className={classes.display} width={vigaLength ? 1100 : 0} height={vigaLength ? 600 : 0}>
       <Layer className={classes.viga}>
         <Rect x={50} y={280} width={1000} height={20} fill="red" />
 
@@ -16,10 +22,10 @@ const Viga = () => {
         <Text x={45} y={580} text="0" fontSize={16} />
 
         <Line x={550} y={530} points={[0, 0, 0, 40]} stroke="black" />
-        <Text x={540} y={580} text="500" fontSize={16} />
+        <Text x={540} y={580} text={(vigaLength / 2).toString()} fontSize={16} />
 
         <Line x={1050} y={530} points={[0, 0, 0, 40]} stroke="black" />
-        <Text x={1030} y={580} text="1000" fontSize={16} />
+        <Text x={1030} y={580} text={vigaLength.toString()} fontSize={16} />
       </Layer>
     </Stage>
   );

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {createStyles, Theme, makeStyles} from '@material-ui/core/styles';
 import {
   Box,
@@ -12,15 +13,17 @@ import {
 } from '@material-ui/core';
 
 import Panel from './Panel';
+import {Store} from '../redux/store';
+import {VigaReducer} from '../redux/reducers/viga';
 
 const Input = () => {
   const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const {length: vigaLength} = useSelector<Store, VigaReducer>(state => state.viga);
 
   const [open, setOpen] = useState(false);
   const [possibleVigaLength, setPossibleVigaLength] = useState('');
-  const [vigaLength, setVigaLength] = useState('');
-
-  console.log(vigaLength);
 
   const handleTextField = (length: string) => {
     setPossibleVigaLength(length);
@@ -33,10 +36,29 @@ const Input = () => {
   const handleClose = () => {
     setOpen(false);
   };
+  const handleExcluirViga = () => {
+    const action = {
+      type: 'SET_LENGTH',
+      payload: {
+        length: 0,
+      },
+    };
+
+    dispatch(action);
+  };
 
   const handleCriarViga = () => {
+    const vigaLength = parseFloat(possibleVigaLength);
+
+    const action = {
+      type: 'SET_LENGTH',
+      payload: {
+        length: Math.abs(vigaLength),
+      },
+    };
+
+    dispatch(action);
     setOpen(false);
-    setVigaLength(possibleVigaLength);
   };
 
   return (
@@ -63,7 +85,7 @@ const Input = () => {
             <Panel label={e.label} description={e.description} options={e.options} />
           ))}
 
-          <Button onClick={() => setVigaLength('')}>Excluir viga</Button>
+          <Button onClick={handleExcluirViga}>Excluir viga</Button>
         </Box>
       ) : (
         <Button onClick={handleOpen}>Criar uma viga</Button>
