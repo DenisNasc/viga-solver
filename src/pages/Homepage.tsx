@@ -16,7 +16,14 @@ const Homepage = () => {
       spacing={2}
       className={classes.gridContainer}
     >
-      <Grid item xs={8} className={classes.gridDisplay}>
+      <Grid
+        container
+        item
+        xs={8}
+        justify="center"
+        alignItems="center"
+        className={classes.gridDisplay}
+      >
         <Viga />
       </Grid>
 
@@ -28,11 +35,25 @@ const Homepage = () => {
         xs={4}
         className={classes.gridInputElementsList}
       >
-        <Grid xs={10} className={classes.gridInput}>
+        <Grid
+          xs={8}
+          container
+          item
+          justify="center"
+          alignItems="center"
+          className={classes.gridInput}
+        >
           <Input />
         </Grid>
 
-        <Grid xs={2} className={classes.gridElementsList}>
+        <Grid
+          xs={4}
+          container
+          item
+          justify="center"
+          alignItems="center"
+          className={classes.gridElementsList}
+        >
           <ElementsList />
         </Grid>
       </Grid>
@@ -62,11 +83,13 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     gridInput: {
       border: '1px solid black',
-      width: '100%',
+
+      maxWidth: '100%',
     },
     gridElementsList: {
       border: '1px solid black',
-      width: '100%',
+      maxWidth: '100%',
+      overflowY: 'scroll',
     },
   })
 );

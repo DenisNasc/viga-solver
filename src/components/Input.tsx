@@ -12,6 +12,8 @@ import {
   DialogContentText,
 } from '@material-ui/core';
 
+import {options} from '../states';
+
 import Panel from './Panel';
 import {Store} from '../redux/store';
 import {VigaReducer} from '../redux/reducers/viga';
@@ -23,11 +25,8 @@ const Input = () => {
   const {length: vigaLength} = useSelector<Store, VigaReducer>(state => state.viga);
 
   const [open, setOpen] = useState(false);
-  const [possibleVigaLength, setPossibleVigaLength] = useState('');
-
-  const handleTextField = (length: string) => {
-    setPossibleVigaLength(length);
-  };
+  const [errorMessage, setErrorMessage] = useState('');
+  const [textFieldValue, setTextFieldValue] = useState(0);
 
   const handleOpen = () => {
     setOpen(true);
@@ -36,53 +35,55 @@ const Input = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleExcluirViga = () => {
-    const action = {
-      type: 'SET_LENGTH',
-      payload: {
-        length: 0,
-      },
-    };
 
-    dispatch(action);
+  const handleTextField = (length: string) => {
+    const vigaLength = parseFloat(length);
+
+    if (typeof vigaLength === 'number') {
+      setTextFieldValue(vigaLength);
+    } else {
+      setErrorMessage('O comprimento da viga deve ser um número');
+    }
   };
 
-  const handleCriarViga = () => {
-    const vigaLength = parseFloat(possibleVigaLength);
-
+  const handleExcluirViga = () => {
     const action = {
-      type: 'SET_LENGTH',
-      payload: {
-        length: Math.abs(vigaLength),
-      },
+      type: 'DEL_VIGA',
     };
 
     dispatch(action);
-    setOpen(false);
+    setTextFieldValue(0);
+  };
+
+  const handleCreateViga = () => {
+    if (textFieldValue > 0) {
+      const action = {
+        type: 'SET_LENGTH',
+        payload: {
+          length: textFieldValue,
+        },
+      };
+
+      setOpen(false);
+      dispatch(action);
+      setErrorMessage('');
+    } else {
+      setErrorMessage('O comprimento da viga deve ser maior que 0');
+    }
   };
 
   return (
     <Box className={classes.input}>
       {vigaLength ? (
         <Box className={classes.menu}>
-          {[
-            {
-              label: 'Apoios',
-              description: 'Apoios são ...',
-              options: ['1° Gênero', '2° Gênero', '3° Gênero'],
-            },
-            {
-              label: 'Cargas Distribuídas',
-              description: 'Cargas distribuídas são ...',
-              options: ['Constante', 'Linear'],
-            },
-            {
-              label: 'Cargas Concentradas',
-              description: 'Cargas concentradas são ...',
-              options: ['Momento', 'Força'],
-            },
-          ].map(e => (
-            <Panel label={e.label} description={e.description} options={e.options} />
+          {options.map(e => (
+            <Panel
+              key={e.label}
+              label={e.label}
+              type={e.type}
+              description={e.description}
+              options={e.options}
+            />
           ))}
 
           <Button onClick={handleExcluirViga}>Excluir viga</Button>
@@ -97,16 +98,18 @@ const Input = () => {
           <DialogContentText>
             Insira um valor para o comprimento da viga em metros
           </DialogContentText>
+
+          <DialogContentText>{errorMessage}</DialogContentText>
           <TextField
             autoFocus
             label="Comprimento da viga"
             type="number"
-            value={possibleVigaLength}
+            value={textFieldValue}
             onChange={e => handleTextField(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCriarViga}>Criar</Button>
+          <Button onClick={handleCreateViga}>Criar</Button>
         </DialogActions>
       </Dialog>
     </Box>
