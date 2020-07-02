@@ -27,11 +27,11 @@ interface IPanel {
   options: string[];
 }
 
-const Panel = ({label, type, description, options}: IPanel) => {
+const Panel = ({label, type, options}: IPanel) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const {length: vigaLength} = useSelector<Store, VigaReducer>(state => state.viga);
+  const {length: vigaLength, elements} = useSelector<Store, VigaReducer>(state => state.viga);
 
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -63,25 +63,36 @@ const Panel = ({label, type, description, options}: IPanel) => {
       },
     };
 
+    const isPositionAvailable = !elements.some(e => e.position === position);
+
+    if (!isPositionAvailable) {
+      setErrorMessage('Dois apoios não podem ocupar a mesma posição');
+
+      return;
+    }
+
     if (position <= vigaLength && position >= 0) {
       dispatch(action);
       setOpen(false);
       setPosition(0);
       setSpecificType('');
       setErrorMessage('');
+
+      return;
     } else {
       setErrorMessage('A posição do elemento não deve ser maior que o comprimento da viga');
+
+      return;
     }
   };
 
   const handleChangePosition = (position: string) => {
-    const positionNumeric = parseFloat(position);
+    let positionNumeric = parseFloat(position);
 
-    if (typeof positionNumeric === 'number') {
-      setPosition(positionNumeric);
-    } else {
-      setErrorMessage('A posição do elemento deve ser um número');
-    }
+    if (typeof positionNumeric !== 'number') return;
+    if (isNaN(positionNumeric)) positionNumeric = 0;
+
+    setPosition(positionNumeric);
   };
 
   return (
@@ -112,7 +123,7 @@ const Panel = ({label, type, description, options}: IPanel) => {
           <TextField
             autoFocus
             label="Posição do elemento"
-            type="number"
+            type="text"
             value={position}
             onChange={e => handleChangePosition(e.target.value)}
           />

@@ -34,16 +34,16 @@ const Input = () => {
 
   const handleClose = () => {
     setOpen(false);
+    setTextFieldValue(0);
   };
 
   const handleTextField = (length: string) => {
-    const vigaLength = parseFloat(length);
+    let vigaLength = parseFloat(length);
 
-    if (typeof vigaLength === 'number') {
-      setTextFieldValue(vigaLength);
-    } else {
-      setErrorMessage('O comprimento da viga deve ser um número');
-    }
+    if (typeof vigaLength !== 'number') return;
+    if (isNaN(vigaLength)) vigaLength = 0;
+
+    setTextFieldValue(vigaLength);
   };
 
   const handleExcluirViga = () => {
@@ -103,7 +103,7 @@ const Input = () => {
           <TextField
             autoFocus
             label="Comprimento da viga"
-            type="number"
+            type="text"
             value={textFieldValue}
             onChange={e => handleTextField(e.target.value)}
           />

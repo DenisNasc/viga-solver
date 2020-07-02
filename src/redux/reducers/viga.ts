@@ -13,6 +13,21 @@ const vigaReducer = (state = initialState, action: ActionVigaReducer) => {
       return {...initialState};
     }
 
+    case 'EDIT_ELEMENT': {
+      const editedElement = action.payload?.element;
+      const selfIndex = action.payload?.selfIndex;
+
+      const elements = [...state.elements];
+
+      if (editedElement && typeof selfIndex === 'number') {
+        elements.splice(selfIndex, 1, editedElement);
+
+        return {...state, elements};
+      }
+
+      return {...state};
+    }
+
     case 'ADD_ELEMENT': {
       const newElement = action.payload?.element;
 
@@ -55,5 +70,6 @@ export interface ActionVigaReducer {
     length: number;
     element: element;
     elementID: string;
+    selfIndex: number;
   };
 }

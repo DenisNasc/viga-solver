@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {useSelector} from 'react-redux';
 import {createStyles, Theme, makeStyles} from '@material-ui/core/styles';
-import {Stage, Layer, Rect, Text, Arrow, Line, Circle} from 'react-konva';
+import {Stage, Layer, Rect, Text, Arrow, Line, Circle, Arc} from 'react-konva';
 
 import {Store} from '../redux/store';
 import {VigaReducer} from '../redux/reducers/viga';
@@ -18,8 +18,6 @@ const Viga = () => {
   const [apoioElements1, setApoioElements1] = useState<element[]>([]);
   const [apoioElements2, setApoioElements2] = useState<element[]>([]);
   const [apoioElements3, setApoioElements3] = useState<element[]>([]);
-
-  console.log(scaleFactor);
 
   useEffect(() => {
     if (vigaLength > 0) {
@@ -84,6 +82,38 @@ const Viga = () => {
               points={[0, 0, 30, 0]}
               stroke="black"
               fill="black"
+            />
+          </React.Fragment>
+        ))}
+      </Layer>
+
+      <Layer>
+        {apoioElements3.map(e => (
+          <React.Fragment key={e.id}>
+            <Circle x={e.position * scaleFactor + 50} y={300} radius={5} fill="blue" />
+            <Arrow
+              x={e.position * scaleFactor + 50}
+              y={300}
+              points={[0, 0, 0, -30]}
+              stroke="black"
+              fill="black"
+            />
+            <Arrow
+              x={e.position * scaleFactor + 50}
+              y={300}
+              points={[0, 0, 30, 0]}
+              stroke="black"
+              fill="black"
+            />
+
+            <Arc
+              x={e.position * scaleFactor + 50}
+              y={300}
+              angle={270}
+              innerRadius={30}
+              outerRadius={30}
+              stroke="black"
+              strokeWidth={1}
             />
           </React.Fragment>
         ))}
